@@ -1,0 +1,25 @@
+#!/usr/bin/ruby
+
+require 'mysql'
+
+$maxwidth = 3
+
+mysql = Mysql.init()
+mysql.connect(host='202.40.167.154', user='magent_admin', passwd='AP173877', db='magent_mage1')
+
+res  = mysql.query('SELECT * FROM mage_customer_entity;')
+
+res.each do |row|
+	row.each do |column|
+		print column
+    ($maxwidth - column.to_i).times{print " "}
+	end
+	puts
+end
+puts
+
+mysql.query('DELETE FROM mage_customer_entity WHERE email LIKE "test@magenta.com.au";')
+mysql.query('DELETE FROM mage_sales_flat_quote WHERE customer_email LIKE "test@magenta.com.au";')
+
+
+

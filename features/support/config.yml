@@ -1,0 +1,5 @@
+prod:
+    base_url: http://www.portplus.com/manage
+
+qa:
+    base_url: http://qa-1384379168.ap-southeast-2.elb.amazonaws.com/manage

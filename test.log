@@ -1,0 +1,20 @@
+BROWSER = chrome
+Using the default profile...
+Feature: As a user I want to log in
+
+  @control-panel-search
+  Scenario: As a Portplus tester, I want to test Control Panel # features\regression\login.feature:13
+    Given I am at login page                                   # features/step_definitions/controlpanel_steps.rb:8
+    And I search for "3406"                                    # features/step_definitions/controlpanel_steps.rb:19
+      Unable to find css ".ui-autocomplete .ui-corner-all" (Capybara::ElementNotFound)
+      ./features/step_definitions/controlpanel_steps.rb:21:in `/I search for "(.*)"/'
+      features\regression\login.feature:15:in `And I search for "3406"'
+      lessthanimg src='screenshots/AsaPortplustester,IwanttotestControlPanel.jpeg' /greaterthan (RuntimeError)
+      D:/projects/RubySpike/features/step_definitions/screen_shot.rb:10:in `After'
+
+Failing Scenarios:
+cucumber features\regression\login.feature:13 # Scenario: AsaPortplustester,IwanttotestControlPanel
+
+1 scenario (1 failed)
+2 steps (1 failed, 1 passed)
+0m42.220s

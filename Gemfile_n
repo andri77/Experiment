@@ -1,0 +1,11 @@
+source "http://rubygems.org/"
+
+  gem 'cucumber'
+  gem 'rake'
+  gem 'rspec'
+  gem 'debugger'
+  gem 'capybara'
+  gem 'gizmo'
+  gem 'term-ansicolor'
+  gem 'selenium-webdriver'
+  gem 'mysql'
