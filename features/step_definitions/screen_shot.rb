@@ -1,16 +1,25 @@
 
 
-After do |scenario|
-#need to write as a byte instead of IP#puts
-if scenario.failed?
-  name =  scenario.name.gsub!(' ', '')#.gsub!(/[\?\.\&=\-\/\\\(\),\'\"\|]/, '')
-  File.open("features/screenshots/#{name}.jpeg", 'wb') do |f|
-    f.write(Base64.decode64(page.driver.browser.screenshot_as(:base64)))
-  end
-  raise "lessthanimg src='screenshots/#{name}.jpeg' /greaterthan"
-end
-# page.driver.browser.save_screenshot("features/screenshots/#{scenario.__id__}.jpeg")
+
+# After do |scenario|
+# #need to write as a byte instead of IP#puts
+# if scenario.failed?
+#   name =  scenario.name.gsub!(' ', '')#.gsub!(/[\?\.\&=\-\/\\\(\),\'\"\|]/, '')
+#   File.open("features/screenshots/#{name}.jpeg", 'wb') do |f|
+#     f.write(Base64.decode64(page.driver.browser.screenshot_as(:base64)))
+#   end
+# end
 # embed("#{scenario.__id__}.jpeg", "image/jpeg", "SCREENSHOT")
+# # page.driver.browser.save_screenshot("features/screenshots/#{scenario.__id__}.jpeg")
+# # embed("#{scenario.__id__}.jpeg", "image/jpeg", "SCREENSHOT")
+# end
+
+After do |scenario|
+  if scenario.failed?
+    page.driver.browser.save_screenshot("./features/screenshots/failures/#{scenario.name}.png")
+    embed("./features/screenshots/failures/#{scenario.name}.png", "image/png")
+  end
+
 end
 
 #at_exit do

@@ -1,2 +1,2 @@
 #!/bin/sh
-cucumber features --t=@categories TEST_ENV=tst BROWSER=firefox --format html --out features/screenshots/results.html
+cucumber features --t @regression --t ~@wip TEST_ENV=stage BROWSER=ff -p html_report

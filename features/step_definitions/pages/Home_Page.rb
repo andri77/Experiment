@@ -1,26 +1,24 @@
 class Home_Page
   include Capybara::DSL
 
-  @page = new
-
-  def self.check_title
-    @page.has_title? 'Portplus Helpdesk'
+  def check_title
+    has_title? 'Portplus Helpdesk'
   end
 
-  def self.visit_page baseUrl
-    @page.visit baseUrl
+  def visit_page baseUrl
+    visit baseUrl
   end
 
-  def self.fill_in_username userName
-    @page.fill_in 'username', :with=> userName
+  def fill_in_username userName
+    fill_in 'username', :with=> userName
   end
 
-  def self.fill_in_password password
-    @page.fill_in 'password', :with=> password
+  def fill_in_password password
+    fill_in 'password', :with=> password
   end
 
-  def self.click_login
-    @page.find(:xpath, ".//*[@id='thisForm']/table/tbody/tr[4]/td[2]/input").click
+  def click_login
+    find(:xpath, ".//*[@id='thisForm']/table/tbody/tr[4]/td[2]/input").click
   end
 
 end

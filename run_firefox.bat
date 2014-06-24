@@ -1,3 +1,3 @@
 set BROWSER=firefox
-set TEST_ENV=tst
-cucumber
+set TEST_ENV=qa
+cucumber --tags=@create-client

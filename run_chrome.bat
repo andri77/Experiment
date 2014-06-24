@@ -1,3 +1,3 @@
 set BROWSER=chrome
-set TEST_ENV=tst
-cucumber --format html --out features/screenshots/results.html
+set TEST_ENV=qa
+cucumber --tags=@create-client --format html --out features/screenshots/results.html

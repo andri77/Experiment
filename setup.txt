@@ -1,0 +1,49 @@
+How to setup the automation suite in windows machine:
+
+- Setup rails installer (ruby 1.9.3)  for windows (http://railsinstaller.org/en) :
+https://s3.amazonaws.com/railsinstaller/Windows/railsinstaller-2.2.3.exe --> direct download link
+This will install the following and insert the tool execution to your path:
+Ruby 1.9.3
+Rails 3.2
+Bundler
+Git
+Sqlite
+TinyTDS
+SQL Server Support
+DevKit
+
+- Download Console2 for command line tool : http://sourceforge.net/projects/console/
+This tool supports window/unix command line
+
+- Download MysGit for Windows : http://msysgit.github.io/
+This will enable unix command in Console2
+Make sure during installation that you select "Use Git and optional Unix tools from the Windows Command Prompt"
+
+-Make Sure Ruby is in your path: type "ruby -v"
+This will output: ruby 1.9.3p545 (2014-02-24) [i386-mingw32]
+
+- Install all the gems required:
+Gem install cucumber
+Gem install rake -v 0.8.7
+Gem install rspec -v 1.2.8
+Gem install capybara
+Gem install term-ansico
+Gem install capybara-webkit
+gem install debugger
+
+- Install AnsiCon from https://github.com/adoxa/ansicon/downloads :
+Add "x86" (if your OS is 32-bit) or "x64" (if 64-bit) to your PATH, or copy the relevant files to a directory already on the PATH.
+This will give you color output for windows
+
+-Download drivers:
+IEDriver:  http://selenium-release.storage.googleapis.com/index.html
+Chrome Driver:  http://chromedriver.storage.googleapis.com/index.html
+Save the .exe files in path location
+
+-Test your setup by running this line:
+cucumber --tags=@create-client TEST_ENV=qa BROWSER=ff
+
+
+
+
+

@@ -1,2 +1,7 @@
 default: -r features/support/ -r features/step_definitions
-
+parallel: --format html --out public/report<%= ENV['TEST_ENV_NUMBER'] %>.html
+parallel: -r features/support/ -r features/step_definitions
+report: --format progress --format html --out public/results.html
+report: -r features/support/ -r features/step_definitions
+pretty: -f pretty
+pretty: -r features/support/ -r features/step_definitions

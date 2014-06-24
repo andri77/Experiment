@@ -1,24 +1,17 @@
-require '.\features\step_definitions\pages\Control_Panel.rb'
-require '.\features\step_definitions\pages\Client_Manager.rb'
-require '.\features\step_definitions\pages\Client_Type.rb'
-require '.\features\step_definitions\pages\Client_Form.rb'
-require 'D:\projects\RubySpike\vendor\ruby\1.9.1\gems\capybara-1.1.2\lib\capybara\driver\base.rb'
-
-cForm = Client_Form.new
 
 Given /^I am at login page$/ do
   steps %{
     Given I am on Portplus homepage
-    And I fill in my user name as "dcropper"
-    And I fill in my password as "Pa$$w0rd"
+    And as a user, I fill in my user name as "dcropper"
+    And as a user, I fill in my password as "Pa$$w0rd"
     When I click login button
     Then I should be directed to the login page
 }
-   Control_Panel.check_heading
+
 end
 
 When /I search for "(.*)"/ do |keyword|
-  Control_Panel.quick_search keyword
+  $control_panel.quick_search keyword
 
   results = find(".ui-autocomplete .ui-corner-all", :match => :first).text
   puts "my first result " + results
@@ -34,90 +27,140 @@ Given /^I click on the first agent$/ do
 end
 
 When /^I login as a staff member$/ do
-find("#loginTool").click
+  $client_manager.staff_login
 end
 
 Then(/^I should be directed to client manager page$/) do
-  page.driver.wait_until { page.has_title? 'Portplus' }
-  Client_Manager.check_title
-  Client_Manager.check_login == 'Login as Tony Horn'
+  $client_manager.check_title
+  $client_manager.check_login == 'Login as Tony Horn'
+end
+
+Given(/^I should wait for "(\d+)" seconds$/) do |seconds|
+  sleep (seconds.to_i)
 end
 
 Then(/^as a staff member, I select to add a client$/) do
-  within_window(page.driver.browser.window_handles.last) do
-    find("td #td_add").click
-    # require 'debugger'
-    # debugger
-    # 1
-    sleep 1
-    find("td #td_add").click
-    find("#clientButton").click
+  within_window(last_window) do
+    $control_panel.page_loaded
+    $control_panel.add_client
   end
 end
 
-
 Then(/^as a staff member, I am able to select my options for the new client$/) do
-  within_window(page.driver.browser.window_handles.last) do
+  within_window(last_window) do
 
-    Client_Type.select_vendor
+    $client_type.select_vendor
 
-    Client_Type.select_vendor_rating
+    $client_type.select_vendor_rating
 
-    Client_Type.select_vendor_source
+    $client_type.select_vendor_source
 
-    Client_Type.select_vendor_staff
+    $client_type.select_vendor_staff
 
-    Client_Type.select_category
+    $client_type.select_category
 
-    Client_Type.click_next
+    $client_type.click_next
 
   end
 end
 
 Then /^as a staff member, I am able to fill in the form with the following:$/ do |table|
-  within_window(page.driver.browser.window_handles.last) do
+  within_window(last_window) do
 
   transposed = table.raw.transpose
   mapped = {}
   transposed[0].each_with_index {|k,i|mapped[k] = transposed[1][i]}
   p mapped
-  p mapped['fName']
-  cForm.input_first_name mapped['fName']
-  cForm.input_last_name mapped['lName']
-  cForm.input_address mapped['address']
-  cForm.input_suburb mapped['suburb']
-  cForm.input_postcode mapped['postcode']
-  cForm.input_email mapped['email']
-  cForm.email_checked
-  cForm.click_client_name
+  $client_form.input_first_name mapped['fName']
+  $client_form.input_last_name mapped['lName']
+  $client_form.input_street mapped['street']
+  $client_form.input_suburb mapped['suburb']
+  $client_form.set_state mapped['state']
+  $client_form.input_postcode mapped['postcode']
+  $client_form.input_email mapped['mobile']
+  $client_form.phone_checked
+  $client_form.sms_checked
+  $client_form.fill_client_name mapped['fName']
+  $client_form.click_save
 
+  end
+
+end
+
+Then(/^as a staff member, I can search for a client "(.*?)"$/) do | name |
+
+  within_window(last_window) do
+
+    $control_panel.page_loaded
+    $control_panel.smart_search name
+    closure = '''find("#results #resultIframeWrapper #resultIframe")'''
+    wait_for_css("#results #resultIframeWrapper #resultIframe", closure)
+    end
+end
+
+# last_window
+
+Then(/^as a staff member, I can select the agent$/) do
+
+  within_window(last_window) do
+  $control_panel.click_agent
+  end
+
+  end
+
+Then(/^as a staff member, I can click on the edit all button$/) do
+  within_window(last_window) do
+    $vendor_page.check_title
+    $vendor_page.click_editAll
+end
+end
+
+Then(/^as a staff member, I can select the agent's pyhsical address$/) do
+  sleep 3
+  within_window(last_window) do
+    $vendor_page.check_title
+
+    $vendor_page.click_physAddr
+  end
+end
+
+Then(/^as a staff member, I can "(.*?)" the client details with the following:$/) do |action, table|
+
+  table.hashes.each do |mapped|
+
+  if action == "edit"
+  steps %{ And as a staff member, I can click on the edit all button
+  }
+
+  within_window(last_window) do
+
+      $client_form.input_street mapped['street']
+      $client_form.input_suburb mapped['suburb']
+      $client_form.select_state mapped['state']
+      $client_form.input_postcode mapped['postcode']
+      $client_form.click_save
+      end
+
+  else
+    within_window(last_window) do
+    $client_form.check_street mapped['street'].downcase
+    $client_form.check_suburb mapped['suburb'].downcase
+    $client_form.check_state mapped['state']
+    $client_form.check_postcode mapped['postcode'].downcase
+  end
+
+  end
 end
 
 end
 
+Then(/^I take a screenshot off the "(.*?)" page and save it at "(.*?)"$/) do | image, location |
+  page.driver.save_screenshot("#{location}#{image}.PNG")
+end
 
-# Given /^I am on Portplus homepage$/ do
-#   page.driver.browser.manage.window.maximize
-#   HOME.visit_page $base_url
-#   HOME.check_title
-# end
-#
-# When /^I fill in my user name as "(.*?)"$/ do |userName|
-#     HOME.fill_in_username userName
-# end
-#
-# When /^I fill in my password as "(.*?)"$/ do |password|
-#   HOME.fill_in_password password
-# end
-#
-#   When /^I click login button$/ do
-#   HOME.click_login
-#     end
-#
-# When /^I should be directed to the login page$/ do
-#   page.current_url.should include 'cHelpdesk.controlpanel'
-# end
-
+Then(/^I compare the screenshots for "(.*?)" page$/) do | image |
+  pixel_diff(image)
+end
 
 #require 'debugger'
 #  debugger

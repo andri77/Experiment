@@ -9,12 +9,12 @@ class Client_Form
     fill_in 'surname', :with=> lName
   end
 
-  def click_client_name
-    find("#client_name").click
+  def fill_client_name fName
+    fill_in 'client_name', :with=> fName
   end
 
-  def input_address address
-    fill_in 'client_streetName_phys', :with=> address
+  def input_street street
+    fill_in 'client_streetName_phys', :with=> street
   end
 
   def input_suburb suburb
@@ -25,16 +25,45 @@ class Client_Form
     fill_in 'client_postcode_phys', :with=> postcode
   end
 
-  def input_email email
-    fill_in 'email', :with=> email
+  def input_email mobile
+    fill_in 'phoneMobile', :with=> mobile
   end
 
-  def email_checked
-    find("#emailContact").checked?
+  def phone_checked
+    find("#phoneContact").checked?
+  end
+
+  def sms_checked
+    find("#smsContact").checked?
   end
 
   def click_save
-    find(".ppBtn.v1").click
- end
+    click_button("Save")
+  end
+
+  #this is a drop box, select by value
+  def select_state state
+    select state, :from => "client_state_phys"
+  end
+
+  def set_state state
+    select state, :from => "client_state_post"
+  end
+
+  def check_street street
+  find_field('client_streetName_phys').value.downcase.should == street
+  end
+
+  def check_suburb suburb
+    find_field('client_suburb_phys').value.downcase.should == suburb
+  end
+
+  def check_state state
+    find_field('client_state_phys').value.should == state
+  end
+
+  def check_postcode postcode
+    find_field('client_postcode_phys').value.downcase.should == postcode
+  end
 
 end

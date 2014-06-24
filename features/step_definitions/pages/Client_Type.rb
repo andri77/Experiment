@@ -1,31 +1,29 @@
 class Client_Type
   include Capybara::DSL
 
-    @page = new
-
-  def self.select_vendor
-    @page.check("isVendor")
+  def select_vendor
+    check("isVendor")
   end
 
-  def self.select_vendor_rating
-    @page.select "low", :from => "vendorRating_id"
+  def select_vendor_rating
+    select "low", :from => "vendorRating_id"
   end
 
-  def self.select_vendor_source
-    @page.select "Referral", :from => "vendorClientSource_id"
+  def select_vendor_source
+    select "Referral", :from => "vendorClientSource_id"
   end
 
-  def self.select_vendor_staff
-    @page.select "Tony Horn", :from => "vendorStaffID"
+  def select_vendor_staff
+    select "Tony Horn", :from => "vendorStaffID"
   end
 
-  def self.select_category
+  def select_category
     #this is a radio button, select by value
-    @page.find(:field, 'client_category', with: 'company').click
+    find(:field, 'client_category', with: 'company').click
   end
 
-  def self.click_next
-    @page.find(".ppBtn.v1").click
+  def click_next
+    find(".ppBtn").click
  end
 
 end
