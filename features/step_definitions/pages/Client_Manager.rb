@@ -13,4 +13,8 @@ class Client_Manager
     find("#loginTool").click
   end
 
+  def get_password
+    find("#tdbody > table:nth-child(3) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > table:nth-child(4) > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(2)").text
+  end
+
 end

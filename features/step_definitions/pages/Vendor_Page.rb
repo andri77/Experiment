@@ -6,7 +6,7 @@ class Vendor_Page
   end
 
   def click_editAll
-  click_button("Edit All")
+    click_button("Edit All")
   end
 
   def click_physAddr

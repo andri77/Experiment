@@ -1,7 +1,13 @@
-default: -r features/support/ -r features/step_definitions
-parallel: --format html --out public/report<%= ENV['TEST_ENV_NUMBER'] %>.html
-parallel: -r features/support/ -r features/step_definitions
-report: --format progress --format html --out public/results.html
-report: -r features/support/ -r features/step_definitions
-pretty: -f pretty
-pretty: -r features/support/ -r features/step_definitions
+default: -r features/support/ -r features/step_definitions --format progress --format rerun --out tmp/rerun.txt
+parallel: -r features/support/ -r features/step_definitions --format progress --format ParallelTests::Cucumber::FailuresLogger --out tmp/cucumber_failures.log --format html --out public/report<%= ENV['TEST_ENV_NUMBER'] %>.html
+report: -r features/support/ -r features/step_definitions --format progress --format rerun --out tmp/rerun.txt --format html --out public/results.html
+pretty: -r features/support/ -r features/step_definitions --format progress --format rerun --out tmp/rerun.txt -f pretty
+selenium: -r features/support/ -r features/step_definitions --t @regression --t ~@wip --format progress --format rerun --out tmp/rerun.txt --format html --out public/results.html
+smoke: -r features/support/ -r features/step_definitions --t @smoke --t ~@wip --format progress --format rerun --out tmp/rerun.txt --format html --out public/smoke.html
+rerun: -r features/step_definitions -r features/support @tmp/rerun.txt --format progress --format html --out public/rerun.html
+smoke_rerun: -r features/step_definitions -r features/support @tmp/rerun.txt --format progress --format html --out public/smoke_rerun.html
+json: -r features/support/ -r features/step_definitions --format rerun --format progress --out tmp/rerun.txt --format Cucumber::Formatter::JsonExpanded --out public/cucumber.json
+selenium-json: -r features/support/ -r features/step_definitions --t @regression --t ~@wip --format progress --format rerun --out tmp/rerun.txt --format Cucumber::Formatter::JsonExpanded --out public/cucumber.json
+rerun-json: -r features/step_definitions -r features/support @tmp/rerun.txt --format progress --format Cucumber::Formatter::JsonExpanded --out public/rerun.json
+
+

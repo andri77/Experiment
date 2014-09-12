@@ -1,6 +1,14 @@
 @screenshots
 Feature: As a user I want to be able to create and modify my property
 
+  @login
+  Scenario: As a Portplus user, I want to be able to login
+    Given I am on Portplus homepage
+    And as a user, I fill in my user name as "dcropper"
+    And as a user, I fill in my password as "Pa$$w0rd"
+    When I click login button
+    Then I should be directed to the login page
+
   @diff
   Scenario: As a tester, I want to do screenshot comparison
     Given I am on Portplus homepage

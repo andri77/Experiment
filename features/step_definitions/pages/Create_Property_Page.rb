@@ -6,7 +6,7 @@ class Create_Property_Page
   end
 
   def click_next
-  click_button("Next >")
+    click_button("Next >")
   end
 
   def select_new_property

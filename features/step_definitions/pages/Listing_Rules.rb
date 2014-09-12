@@ -6,7 +6,8 @@ class Listing_Rules
   end
 
   def approve_selected
-    click_button("Approve selected")
+    all("[value='Approve selected']")[0].click
+    # click_button("Approve selected")
   end
 
   def close_window

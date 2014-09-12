@@ -10,11 +10,11 @@ class Home_Page
   end
 
   def fill_in_username userName
-    fill_in 'username', :with=> userName
+    fill_in 'username', :with => userName
   end
 
   def fill_in_password password
-    fill_in 'password', :with=> password
+    fill_in 'password', :with => password
   end
 
   def click_login

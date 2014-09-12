@@ -4,79 +4,81 @@ require 'chunky_png'
 require 'colorize'
 require 'debugger'
 
-
-###########################################################################
-  def close_pop_up_window browser, str_win_title
-=begin
-    * Name:   close_pop_up_window
-    * Description: This method use to to close pop-up window
-=end
-    begin
-      hook    # Close it
-      browser.switch_to.window(str_win_title)
-      browser.close
-      strDetails = "close #{str_win_title} pop-up window successfully"
-      puts strDetails
-    rescue Exception => e
-      puts e
-    end
-  end
-###########################################################################
-def close_all_popups
-=begin
-    * Name:   close_pop_up_window
-    * Description: This method use to to close all pop-up window
-=end
-  begin
-    page.driver.browser.window_handles
-    page.driver.browser.window_handles.each do |handle|
-      page.driver.browser.switch_to.window(handle)
-      page.driver.browser.close()
-      # page.execute_script "window.close()"
-    end
-  rescue Exception => e
-    puts e
-  end
-end
-###########################################################################
-def wait_for_element_present how, objObject, timeOut=$timeout
-=begin
-    * Name:   wait_for_element_present
-	  * Note: Add "how" variable to this function can be used for both xpath and css
-    *       how: :xpath, :css, :id, :name
-    * Usage: +wait_for_element_present "content",CONTENT_TO_FIND,10 => find content on web page
-             +wait_for_element_present :id,OBJ_ID,10     => find element by id
-             +wait_for_element_present :name,OBJ_NAME,10     => find element by name
-             +wait_for_element_present :css,OBJ_CSS,10     => find element by css
-             +wait_for_element_present :xpath,OBJ_XPath,10     => find element by xpath
-
-=end
-  begin
-    wait_for_it = Selenium::WebDriver::Wait.new(:timeout => timeOut)
-    case how
-      when "content"
-        wait_for_it.until { page.driver.browser.find_element(:xpath, "//*[contains(text(),'#{objObject}')]").displayed?}
-        strDetails = "Content " + objObject + " found"
-        puts strDetails
-      else
-        wait_for_it.until { page.driver.browser.find_element(how, objObject).displayed?}
-        strDetails = "Object " + objObject + " found"
-        puts strDetails
-    end
-    sleep 5
-  rescue Exception => e
-    puts e
-  end
-  end
-
 def wait_for_css(element, closure)
   i = 0
-  clos = Proc.new{ closure }
+  l = lambda {eval(closure)}
   while has_no_css?(element) && i < 10  do
-    clos.call
+    l.call
     sleep 1
     i +=1
   end
+end
+
+def wait_for_value(expected, closure)
+  i = 0
+  val = false
+  l = lambda {eval(closure)}
+  while val != expected && i < 10  do
+    puts "In loop " + val.to_s
+    val = get_value(l)
+    puts "In loop " + val.to_s
+    sleep 1
+    i +=1
+  end
+end
+
+def act_for_value(expected, closure, action)
+  i = 0
+  val = false
+  l = lambda {eval(closure)}
+  try = lambda {eval(action)}
+  while val != expected && i < 10  do
+    puts "In loop " + val.to_s
+    val = get_value(l)
+    try.call
+    puts "In loop " + val.to_s
+    sleep 1
+    i +=1
+  end
+end
+
+def get_value(l)
+ begin
+   l.call
+   return true
+ rescue Exception => e
+   puts e.to_s.red
+   return false
+end
+end
+
+def wait_for_window(element)
+  i = 0
+  page.driver.window_handles.each do | handle |
+    within_window(handle) do
+  while has_no_css?(element) && i < 10  do
+    sleep 1
+    i +=1
+  end
+    end
+    end
+end
+
+def find_window_handle(element)
+  found = false
+  my_handle = 0
+  page.driver.window_handles.each do | handle |
+    within_window(handle) do
+      # while found == false && i < 10 do
+      found = has_css?(element)
+      puts found
+      if found
+        my_handle = handle
+        end
+    end
+
+  end
+  my_handle
 end
 
 def last_window
@@ -87,7 +89,13 @@ def accept_alert
 wait = Selenium::WebDriver::Wait.new ignore: Selenium::WebDriver::Error::NoAlertPresentError
 alert = wait.until { page.driver.browser.switch_to.alert }
 alert.accept
-  end
+end
+
+def reject_alert
+  wait = Selenium::WebDriver::Wait.new ignore: Selenium::WebDriver::Error::NoAlertPresentError
+  alert = wait.until { page.driver.browser.switch_to.alert }
+  alert.reject
+end
 
 
 def pixel_diff(fileName)
@@ -115,7 +123,7 @@ def pixel_diff(fileName)
 if x != [] && y != []
   images.last.rect(x.min, y.min, x.max, y.max, ChunkyPNG::Color.rgb(0,255,0))
   images.last.save("./features/screenshots/diff/#{fileName}.PNG")
-
+  difference.should_not >= 1.0
   begin
     difference.should_not >= 0.015
   rescue Exception => e
@@ -126,6 +134,7 @@ if x != [] && y != []
   else difference == 0.0
     puts "No changes in image lay out".yellow
   end
+
 end
 
 def color_diff
@@ -176,9 +185,51 @@ analyze = Proc.new {
 analyze.call
 end
 
+def table_transpose(table)
+  mapped = {}
+  transposed = table.raw.transpose
+  transposed[0].each_with_index {|k,i|mapped[k] = transposed[1][i]}
+  p mapped
+end
 
+def rescue_window(element)
+begin
+  find_window_handle(element)
+rescue Exception => e
+  puts e.to_s.red
+end
+  end
 
+def debug_blank_ff
+  @driver = Selenium::WebDriver.for :firefox
+  analyze
+  # @driver.find_element(:id, "andri")
+  # @driver.find_element(:id, "andri").send_keys "C:\\Users\\aPurmawinata\\Pictures\\another error.JPG"
+end
 
+def attach_image(element, path)
+  if element =~ /^./
+    element = element.sub(".", "")
+    puts "element " + element
+  page.driver.browser.find_element(:class, element).send_keys File.expand_path(path)
+
+  elsif element =~ /^#/
+    element = element.sub("#", "")
+    page.driver.browser.find_element(:id, element).send_keys File.expand_path(path)
+
+  else
+    puts "Element needs to be either an ID or a Class, example: #ID or .class "
+
+  end
+end
+
+# Confirm Image Upload, atm still better to reside in helper methods
+# def confirm_image(element, regex, width, height)
+#   puts "Image URL " + find(element).native.attribute("src")
+#   find(element).native.attribute("src").should =~ regex
+#   find(element).native.attribute("width").should == width
+#   find(element).native.attribute("height").should == height
+# end
 
 
 

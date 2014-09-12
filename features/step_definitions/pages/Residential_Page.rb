@@ -6,6 +6,7 @@ class Residential_Page
   end
 
   def edit_all
+    # find("#ppbtn4254").click
     click_button("Edit All")
   end
 
@@ -18,7 +19,19 @@ class Residential_Page
   end
 
   def confirm_withdrawn
-  find("li.first.status-img.status-withdrawn a div").visible?
+    find("li.first.status-img.status-withdrawn a div").visible?
+  end
+
+  def confirm_status status
+    find("li.first.status-img.status-#{status} a div").visible?
+  end
+
+  def add_vendor vendor
+    fill_in 'clientNameAdd', :with => vendor
+  end
+
+  def search
+    click_button("Search")
   end
 
 end
